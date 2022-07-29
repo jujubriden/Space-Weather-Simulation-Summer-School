@@ -24,7 +24,7 @@ from math import pi
 plt.close()
 
 "Number of points"
-N = 16
+N = 32
 Dx = 1/N
 x = np.linspace(0,1,N+1)
 

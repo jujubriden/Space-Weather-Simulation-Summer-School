@@ -18,7 +18,6 @@ __email__ = 'jvilap@mit.edu'
 import numpy as np
 import matplotlib.pyplot as plt
 from math import pi
-%matplotlib qt
 plt.close()
 import matplotlib.animation as animation
 
