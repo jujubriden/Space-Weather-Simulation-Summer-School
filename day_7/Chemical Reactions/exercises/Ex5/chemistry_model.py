@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 
+
 # reaction network
 # chemical reactions
 # (1) O+ + N2 -> NO+ + N
@@ -65,22 +66,39 @@ stoich_mat[[0,6],11] = 1
 stoich_mat[[5],12] = 1
 stoich_mat[[0,6],12] = -1
 
-# compute rection coefficients as function of temperature T
+# rection coefficients
+def k1(T):
+    if T >= 300 and T <= 1700:
+        k1 = 1.533e-12 - 5.92e-13*(T/300.0) + 8.6e-14*(T/300.0)**2
+    else: 
+        k1 = 2.73e-12 - 1.155e-12*(T/300.0) + 1.483e-13*(T/300.0)**2 
+    return k1
+
 def rate_constants(T):
-    return ... # complete this function
+    ks = np.array([
+            k1(T),
+            2.82e-11,
+            1.6e-7*(300/T)**0.55,
+            1e-11*(300/T)**0.23 if T <= 1500 else 3.6e-12*(T/300)**0.41,
+            5e-11*300/T,
+            1.2e-10,
+            4.2e-7*(300/T)**0.85,
+            1e-4, 
+            1e-8,
+            1e-4,
+            1e-8,
+            1e-4,
+            1e-8])
+    return ks 
 
-# reaction rates as function of composition c and temperature T
 def rates(c,T):
-    return ... # complete this function
+    ks = rate_constants(T)
+    return ks * [c[2]*c[5], c[2]*c[3], c[0]*c[4], c[6]*c[1], c[6]*c[3], c[4]*c[8], 
+                    c[7]*c[0], c[1], c[2]*c[0], c[3], c[4]*c[0], c[5], c[6]*c[0]]
 
-# overall reactor model
 def reactor_model(c,t,S,T):
-    return ... # complete this model
+    return S @ rates(c,T)
 
-
-########################################
-### hereafter no more code modification necessary
-########################################
 
 c0_100 = np.zeros(9)
 c0_100[spec2idx['O']] = 4.26e11
@@ -100,12 +118,11 @@ Te = {100 : Te_100, 300 : Te_300}
 alts = [100, 300]
 tspan = {100 : (0, 10000.0), 300 : (0, 10000.0)}
 t_eval = {alt : None for alt in alts} 
-sol = {}
-for alt in alts:  
-    sol[alt] = ... # complete the solve statement here
-                   # use solve_ivp with 'LSODA' as integrator. 
-                   # https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html 
-                
+sol = {alt : solve_ivp(lambda t, c : reactor_model(c,t,stoich_mat,Te[alt]),
+                       tspan[alt], 
+                       c0[alt], 
+                       t_eval = t_eval[alt], 
+                       method = 'LSODA') for alt in alts}
 
 ions = [0,2,4,6,7]
 for alt in alts:
@@ -124,4 +141,3 @@ for alt in alts:
         ax.plot(sol[alt].t, sol[alt].y[i]/c0[alt][i], label = idx2spec[i])
     ax.legend(loc = 'upper right')
     fig.savefig("species_concentrations_"+str(alt)+".pdf")
-

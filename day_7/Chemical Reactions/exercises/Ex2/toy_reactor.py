@@ -9,8 +9,11 @@ import runge_kutta as rk
 
 # Please implement here:
 #    S - numpy array carrying the stoichiometry matrix
+S = np.array([[-1, 0, 0], [1, -1, 1], [0, 2, -2]])
 #    k - numpy array carrying the rate coefficients k1 = 100, k2=0.25, k3=1
+k = np.array([100, 0.25, 1])
 #    c_0 - initial composition, i.e., c_0(A) = 1, c_0(B)=c_0(C)=0.0
+c_0 = np.array([1, 0, 0])
 
 def reaction_rates(c,k):
     """
@@ -23,7 +26,10 @@ def reaction_rates(c,k):
         outputs:
             reaction rates (numpy array)
     """
-    return ... # please complete this function
+    
+    r = k*[c[0],c[1],c[2]**2]
+    
+    return r
 
 def reactor(c,t,k,S):
     """
@@ -38,10 +44,13 @@ def reactor(c,t,k,S):
         outputs: 
             dc/dt - numpy array
     """
-    return ... # please complete this function
+    
+    dcdt = np.matmul(S,reaction_rates(c,k))
+    
+    return dcdt
 
 # Please play around with the step size to study the effect on the solution
-h = 1e-3
+h = 1e-3 # concentration plots are not smooth when h < 1e-3
 
 ########################################
 ### hereafter no more code modification necessary
@@ -62,7 +71,7 @@ trajectory, time_points = rk.integrate(lambda c, t: reactor(c, t, k, S),
                                        dormant_prince_stepper)
 
 species_names = ["A", "B", "C"]
-colors = ["red", "blue", "black"]
+colors = ["red", "green", "black"]
 
 fig, axs = plt.subplots(2)
 ax = axs[0]

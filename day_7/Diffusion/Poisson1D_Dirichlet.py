@@ -21,11 +21,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation    #We have to load this
 from math import pi
-%matplotlib qt
 plt.close()
 
 "Number of points"
-N = 8
+N = 32
 Dx = 1/N
 x = np.linspace(0,1,N+1)
 

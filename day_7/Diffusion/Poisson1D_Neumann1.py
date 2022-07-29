@@ -21,7 +21,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation    #We have to load this
 from math import pi
-%matplotlib qt
 plt.close()
 
 "Number of points"
@@ -33,7 +32,7 @@ x = np.linspace(0,1,N+1)
 u0 = 0
 
 "Order of Neumann boundary condition approximation"
-order = 1
+order = 1 #increasing order increased accuracy
 
 "System matrix and RHS term"
 A = (1/Dx**2)*(2*np.diag(np.ones(N+1)) - np.diag(np.ones(N),-1) - np.diag(np.ones(N),1))
